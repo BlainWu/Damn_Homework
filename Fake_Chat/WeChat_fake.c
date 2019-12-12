@@ -21,7 +21,7 @@ void white_bubble_pre(void);
 void white_bubble_back(void);
 
 int main()
-	{
+{
     UART0_init();
     UART1_init();
     window_name();
@@ -40,41 +40,34 @@ int main()
                     {
                         UART0_Tx('\b');
                     }
-                    for(int i;i<count;i++)//cover the unfinished msg
-                    {
-                        UART0_Tx(' ');
-                    }
-                    for(int i;i<count;i++)//cover the unfinished msg
-                    {
-                        UART0_Tx('\b');
-                    }
+                    UART0_Tx('\r');
+                    space(BUF_SIZE);
+                    UART0_Tx('\n');
+                    UART0_Tx('\r');
                     friend_name();
-                    green_bubble_pre();UART0_Tx(' ');green_bubble_back();
+                    white_bubble_pre();UART0_Tx(' ');white_bubble_back();
                     reciev_flag=1;
                     break;
                 }
+                    //The bug may be here
                 else if(temp=='\r')//when the other transmit and not empty
                 {
                     for(int i;i<count;i++)//cover the unfinished msg
                     {
                         UART0_Tx('\b');
                     }
-                    for(int i;i<count;i++)//cover the unfinished msg
-                    {
-                        UART0_Tx(' ');
-                    }
-                    for(int i;i<count;i++)//cover the unfinished msg
-                    {
-                        UART0_Tx('\b');
-                    }
+                    UART0_Tx('\r');
+                    space(BUF_SIZE);
+                    UART0_Tx('\n');
+                    UART0_Tx('\r');
                     friend_name();
                     reciev_flag=1;
                     break;
                 }
-                    reci_count++;//store the msg recived
-                    }
+                reci_count++;//store the msg recived
+            }
         }
-        
+
         for(int i =0;i<reci_count;i++)//show the msg got
         {
             if(i==0) white_bubble_pre();
@@ -84,14 +77,16 @@ int main()
         }
         if(reciev_flag) //show the unfinsed msg
         {
-            UART0_Tx('\r');
             UART0_Tx('\n');
+            UART0_Tx('\r');
             for(int i =0;i<count;i++)
             {
                 UART0_Tx(message[i]);
             }
             reciev_flag=0;
         }
+
+
         while(UART0->S1&0x20)
         {
             uint8_t dt;
@@ -137,10 +132,12 @@ int main()
                 }
                 UART0_Tx('\r');
                 UART0_Tx('\n');
+                UART0_Tx('\r');
+                UART0_Tx('\n');
                 count = 0;
-          }
-				}
-		}
+            }
+        }
+    }
 }
 void delay(int n)
 {
